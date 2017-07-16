@@ -13,9 +13,11 @@ const kyotoLocation = { lat: 35.02107, lng: 135.75385 };
 function markerData(eventInfo) {
   const title = eventInfo.title || 'no title';
   const position = { lat: Number(eventInfo.lat) || 0, lng: Number(eventInfo.lon) || 0 };
+  const eventUrl = eventInfo.event_url
   return {
     title,
-    position
+    position,
+    eventUrl
   };
 }
 
@@ -30,6 +32,7 @@ const GettingStartedGoogleMap = withGoogleMap((props) => {
         props.eventInfo.map((eventInfo, i) => (
           <Marker
             { ...eventInfo }
+            onClick={props.markerOnClick(eventInfo.eventUrl)}
             key={i}
           />
         ))
@@ -111,12 +114,18 @@ export default class Home extends Component {
   handleMapLoad(map) {
     this._mapComponent = map;
     if (map) {
-      console.log(map.getZoom());
+      // console.log(map.getZoom());
     }
   }
 
   showEvent() {
     this.setState({ showEvent: true });
+  }
+
+  markerOnClick(eventUrl) {
+    return () => {
+      window.open(eventUrl, "_blank")
+    };
   }
 
   render() {
@@ -150,6 +159,7 @@ export default class Home extends Component {
             eventInfo={showEvent ? eventInfo : []}
             userInfo={userInfo}
             defaultCenter={defaultCenter}
+            markerOnClick={this.markerOnClick}
           />
         </section>
         <section className="col span-1-of-6"/>
