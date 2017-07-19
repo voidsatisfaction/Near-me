@@ -8,7 +8,7 @@ import api from '../../../api';
 import './style.css';
 
 const initialZoomLevel = 13;
-const kyotoLocation = { lat: 35.02107, lng: 135.75385 };
+const kyotoLocation = { lat: 35.02107, lng: 133.75385 };
 
 function markerData(eventInfo) {
   const title = eventInfo.title || 'no title';
@@ -54,7 +54,6 @@ export default class Home extends Component {
     super(props);
     this.state = {
       showEvent: false,
-      defaultCenter: kyotoLocation,
       eventInfo: {
         connpass: [],
         doorkeeper: []
@@ -64,8 +63,8 @@ export default class Home extends Component {
         loading: true,
         position: {
           name: '',
-          lat: 0,
-          lng: 0
+          lat: null,
+          lng: null
         },
       },
       markers: [],
@@ -162,27 +161,29 @@ export default class Home extends Component {
             <div className="sub-title">
               Now loading...
             </div> :
-            <div className="sub-title">
-              Find IT conferences near you!
-              <Button
-                onClick={this.showEvent}
-                text="Find now!"
+            <div style={{ width: '100%', height: '100%' }}>
+              <div className="sub-title">
+                Find IT conferences near you!
+                <Button
+                  onClick={this.showEvent}
+                  text="Find now!"
+                />
+              </div>
+              <GettingStartedGoogleMap
+                containerElement={
+                  <div className="googlemap-container" style={{ height: `100%` }} />
+                }
+                mapElement={
+                  <div style={{ height: `100%` }} />
+                }
+                onMapLoad={this.handleMapLoad}
+                markerInfo={showEvent ? markerInfo : []}
+                userInfo={userInfo}
+                defaultCenter={userInfo.position}
+                markerOnClick={this.markerOnClick}
               />
-            </div> 
+            </div>
           }
-          <GettingStartedGoogleMap
-            containerElement={
-              <div className="googlemap-container" style={{ height: `100%` }} />
-            }
-            mapElement={
-              <div style={{ height: `100%` }} />
-            }
-            onMapLoad={this.handleMapLoad}
-            markerInfo={showEvent ? markerInfo : []}
-            userInfo={userInfo}
-            defaultCenter={defaultCenter}
-            markerOnClick={this.markerOnClick}
-          />
         </section>
         <section className="col span-1-of-6"/>
       </div>     
