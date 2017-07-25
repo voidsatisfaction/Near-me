@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import { withGoogleMap, GoogleMap, Marker, Circle } from 'react-google-maps';
 import Button from '../../atom/Button';
+import TempMessageBox from '../../molecule/TempMessageBox';
 
 import api from '../../../api';
 
@@ -53,6 +54,11 @@ export default class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      message: {
+        show: false,
+        type: '', // danger, primary, ...
+        content: ''
+      },
       showEvent: false,
       eventInfo: {
         connpass: [],
@@ -72,6 +78,7 @@ export default class Home extends Component {
     this.handleMapLoad = this.handleMapLoad.bind(this);
     this.getDataSucceedHoc = this.getDataSucceedHoc.bind(this);
     this.showEvent = this.showEvent.bind(this);
+    this.getUserLocationError = this.getUserLocationError.bind(this);
   }
 
   componentWillMount() {
@@ -84,15 +91,29 @@ export default class Home extends Component {
           eventInfo,
           markerInfo,
         });
-      });
+      })
+      .catch(this.getUserLocationError);
   }
 
   getUserLocation() {
     return new Promise((resolve, reject) => {
       navigator.geolocation.getCurrentPosition(
         this.getDataSucceedHoc(resolve),
-        this.getDataFail
+        this.getDataFailHoc(reject)
       );
+    });
+  }
+
+  getUserLocationError(e) {
+    this.setState({
+      message: {
+        show: true,
+        type: 'danger',
+        content: e.message
+      },
+      userInfo: {
+        loading: false,
+      }
     });
   }
 
@@ -112,8 +133,14 @@ export default class Home extends Component {
     }
   }
 
-  getDataFail() {
-    console.error('fail');
+  getDataFailHoc(next) {
+    return (error) => {
+      next({
+        error: true,
+        message: "There are Some problems with google(not this app)." +
+        "  Please try this application a few hours later"
+      });
+    }
   }
 
   getUserNearEvents(location) {
@@ -150,12 +177,21 @@ export default class Home extends Component {
       defaultCenter,
       showEvent,
       eventInfo,
-      markerInfo
+      markerInfo,
+      message
     } = this.state;
     return (
       <div className="row home-container">
         <section className="col span-1-of-6"/>
         <section className="col span-2-of-3 home-main">
+          {
+            message.show ?
+            <TempMessageBox
+              type={message.type}
+              content={message.content}
+            /> :
+            <div/>
+          }
           {
             userInfo.loading ?
             <div className="sub-title">
