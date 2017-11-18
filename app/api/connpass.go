@@ -27,7 +27,7 @@ type ConnpassEvent struct {
 	Place     string    `json:"place"`
 }
 
-func ConnpassGetEvents(city string, nums int) ([]ConnpassEvent, error) {
+func ConnpassGetEvents(city string, nums int, connpassCH chan []ConnpassEvent) error {
 	if nums == 0 {
 		nums = 10
 	}
@@ -36,15 +36,17 @@ func ConnpassGetEvents(city string, nums int) ([]ConnpassEvent, error) {
 	host := "https://connpass.com/api/v1/event/?"
 	resp, err := http.Get(host + "keyword=" + city + "&count=" + strconv.Itoa(nums))
 	if err != nil {
-		return []ConnpassEvent{}, err
+		return err
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return []ConnpassEvent{}, err
+		return err
 	}
 	defer resp.Body.Close()
 
 	json.Unmarshal(body, &connpassEvents)
-	return connpassEvents.Data, nil
+
+	connpassCH <- connpassEvents.Data
+	return nil
 }

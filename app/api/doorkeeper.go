@@ -23,7 +23,7 @@ type DoorkeeperEvent struct {
 	} `json:"event"`
 }
 
-func DoorkeeperGetEvents(city string, nums int) (DoorkeeperEvents, error) {
+func DoorkeeperGetEvents(city string, nums int, doorkeeperCH chan DoorkeeperEvents) error {
 	key := os.Getenv("DOORKEEPER_KEY")
 	host := "https://api.doorkeeper.jp/"
 	url := host + "events?q=" + city + "&sort=starts_at"
@@ -32,7 +32,7 @@ func DoorkeeperGetEvents(city string, nums int) (DoorkeeperEvents, error) {
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		return doorkeeperEvents, err
+		return err
 	}
 	req.Header.Add("Authorization", "Bearer "+key)
 	req.Header.Add("Content-Type", "application/json")
@@ -40,15 +40,17 @@ func DoorkeeperGetEvents(city string, nums int) (DoorkeeperEvents, error) {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return doorkeeperEvents, err
+		return err
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return doorkeeperEvents, err
+		return err
 	}
 	defer resp.Body.Close()
 
 	json.Unmarshal(body, &doorkeeperEvents)
-	return doorkeeperEvents, nil
+
+	doorkeeperCH <- doorkeeperEvents
+	return nil
 }

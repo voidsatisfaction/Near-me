@@ -26,11 +26,21 @@ func (c App) Myplace() revel.Result {
 
 	events := factory.Events{}
 
+	connpassCH := make(chan []api.ConnpassEvent)
 	connpassEventNums := 100
-	connpassEvents, err := api.ConnpassGetEvents(city, connpassEventNums)
+	err = api.ConnpassGetEvents(city, connpassEventNums, connpassCH)
 	if err != nil {
 		return c.RenderError(err)
 	}
+
+	doorkeeperCH := make(chan api.DoorkeeperEvents)
+	err = api.DoorkeeperGetEvents(city, 0, doorkeeperCH)
+	if err != nil {
+		return c.RenderError(err)
+	}
+
+	connpassEvents := <-connpassCH
+	doorkeeperEvents := <-doorkeeperCH
 
 	// add connpass events
 	for _, connpassEvent := range connpassEvents {
@@ -39,11 +49,6 @@ func (c App) Myplace() revel.Result {
 		if event.WillHold() {
 			events.Data = append(events.Data, *event)
 		}
-	}
-
-	doorkeeperEvents, err := api.DoorkeeperGetEvents(city, 0)
-	if err != nil {
-		return c.RenderError(err)
 	}
 
 	// add doorkeeper events
