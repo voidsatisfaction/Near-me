@@ -19,3 +19,10 @@ Docker + Heroku
 
 1. `source .env`
 2. revel run near_me_server
+
+## Used api
+
+- Yahoo Geolocation api
+- Google Map api
+- Connpass api
+- Doorkeeper api
