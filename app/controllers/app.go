@@ -3,6 +3,7 @@ package controllers
 import (
 	"near_me_server/app/api"
 	"near_me_server/app/factory"
+	"near_me_server/app/services"
 
 	"github.com/revel/revel"
 )
@@ -26,21 +27,13 @@ func (c App) Myplace() revel.Result {
 
 	events := factory.Events{}
 
-	connpassCH := make(chan []api.ConnpassEvent)
-	connpassEventNums := 100
-	go api.ConnpassGetEvents(city, connpassEventNums, connpassCH)
+	es, err := services.GetAllEvents(city)
 	if err != nil {
 		return c.RenderError(err)
 	}
 
-	doorkeeperCH := make(chan api.DoorkeeperEvents)
-	go api.DoorkeeperGetEvents(city, 0, doorkeeperCH)
-	if err != nil {
-		return c.RenderError(err)
-	}
-
-	connpassEvents := <-connpassCH
-	doorkeeperEvents := <-doorkeeperCH
+	connpassEvents := es.Connpass
+	doorkeeperEvents := es.Doorkeeper
 
 	// add connpass events
 	for _, connpassEvent := range connpassEvents {
