@@ -22,6 +22,7 @@ Docker + Heroku
 
 ## Used api
 
+- HTML5 Geolocation api
 - Yahoo Geolocation api
 - Google Map api
 - Connpass api
