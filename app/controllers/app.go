@@ -28,13 +28,13 @@ func (c App) Myplace() revel.Result {
 
 	connpassCH := make(chan []api.ConnpassEvent)
 	connpassEventNums := 100
-	err = api.ConnpassGetEvents(city, connpassEventNums, connpassCH)
+	go api.ConnpassGetEvents(city, connpassEventNums, connpassCH)
 	if err != nil {
 		return c.RenderError(err)
 	}
 
 	doorkeeperCH := make(chan api.DoorkeeperEvents)
-	err = api.DoorkeeperGetEvents(city, 0, doorkeeperCH)
+	go api.DoorkeeperGetEvents(city, 0, doorkeeperCH)
 	if err != nil {
 		return c.RenderError(err)
 	}
