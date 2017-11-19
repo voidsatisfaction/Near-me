@@ -20,14 +20,14 @@ func (c App) Myplace() revel.Result {
 	latitude := c.Params.Query.Get("lat")
 	longitude := c.Params.Query.Get("lng")
 
-	city, err := api.YahooGetLocation(latitude, longitude)
+	userLocation, err := api.YahooGetLocation(latitude, longitude)
 	if err != nil {
 		return c.RenderError(err)
 	}
 
 	events := factory.Events{}
 
-	es, err := services.GetAllEvents(city)
+	es, err := services.GetAllEvents(userLocation)
 	if err != nil {
 		return c.RenderError(err)
 	}

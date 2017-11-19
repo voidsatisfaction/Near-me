@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -27,14 +28,15 @@ type ConnpassEvent struct {
 	Place     string    `json:"place"`
 }
 
-func ConnpassGetEvents(city string, nums int, connpassCH chan []ConnpassEvent, errCH chan error) {
+func ConnpassGetEvents(userLocation []string, nums int, connpassCH chan []ConnpassEvent, errCH chan error) {
 	if nums == 0 {
 		nums = 10
 	}
 	var connpassEvents ConnpassEvents
 
 	host := "https://connpass.com/api/v1/event/?"
-	resp, err := http.Get(host + "keyword=" + city + "&count=" + strconv.Itoa(nums))
+	keyword := strings.Join(userLocation, ",")
+	resp, err := http.Get(host + "keyword_or=" + keyword + "&count=" + strconv.Itoa(nums))
 	if err != nil {
 		errCH <- err
 		return

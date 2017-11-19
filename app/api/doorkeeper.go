@@ -23,9 +23,10 @@ type DoorkeeperEvent struct {
 	} `json:"event"`
 }
 
-func DoorkeeperGetEvents(city string, nums int, doorkeeperCH chan DoorkeeperEvents, errCH chan error) {
+func DoorkeeperGetEvents(userLocation []string, nums int, doorkeeperCH chan DoorkeeperEvents, errCH chan error) {
 	key := os.Getenv("DOORKEEPER_KEY")
 	host := "https://api.doorkeeper.jp/"
+	city := userLocation[0]
 	url := host + "events?q=" + city + "&sort=starts_at"
 
 	doorkeeperEvents := DoorkeeperEvents{}

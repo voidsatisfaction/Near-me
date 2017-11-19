@@ -10,17 +10,17 @@ type Events struct {
 	Doorkeeper api.DoorkeeperEvents
 }
 
-func GetAllEvents(city string) (*Events, error) {
+func GetAllEvents(userLocation []string) (*Events, error) {
 	// this is the number of event type
 	typeNum := 2
 
 	connpassCH := make(chan []api.ConnpassEvent)
 	errCH := make(chan error)
 	connpassEventNums := 100
-	go api.ConnpassGetEvents(city, connpassEventNums, connpassCH, errCH)
+	go api.ConnpassGetEvents(userLocation, connpassEventNums, connpassCH, errCH)
 
 	doorkeeperCH := make(chan api.DoorkeeperEvents)
-	go api.DoorkeeperGetEvents(city, 0, doorkeeperCH, errCH)
+	go api.DoorkeeperGetEvents(userLocation, 0, doorkeeperCH, errCH)
 
 	var connpassEvents []api.ConnpassEvent
 	var doorkeeperEvents api.DoorkeeperEvents
