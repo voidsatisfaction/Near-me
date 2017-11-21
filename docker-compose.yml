@@ -1,0 +1,20 @@
+version: "3"
+services:
+  web-server:
+    build: .
+    container_name: "near_me_server"
+    ports:
+      - "19000:9000"
+    volumes:
+      - "$PWD:/go/src/near_me_server"
+    env_file:
+      - "$PWD/.env"
+  web-client:
+    build: $PWD/../near_me_client/.
+    container_name: "near_me_client"
+    ports:
+      - "13000:3000"
+    volumes:
+      - "$PWD/../near_me_client:/go/src/near_me_client"
+    links:
+      - web-server:web-server
