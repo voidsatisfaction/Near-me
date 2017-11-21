@@ -7,3 +7,6 @@ client/build/*
 .env
 
 vendor/*
+
+app/routes
+app/tmp

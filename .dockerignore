@@ -3,3 +3,6 @@
 .gitignore
 
 vendor
+
+app/routes
+app/tmp
