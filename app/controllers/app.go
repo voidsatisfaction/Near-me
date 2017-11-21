@@ -16,6 +16,10 @@ func (c App) Index() revel.Result {
 	return c.Render()
 }
 
+func (c App) Ping() revel.Result {
+	return c.RenderJSON("pong")
+}
+
 func (c App) Myplace() revel.Result {
 	latitude := c.Params.Query.Get("lat")
 	longitude := c.Params.Query.Get("lng")
