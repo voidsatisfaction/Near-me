@@ -1,5 +1,7 @@
 FROM golang:1.9.2-stretch
 
+ENV GOPATH $GOPATH:/go
+
 RUN apt-get update && \
     apt-get upgrade -y
 
@@ -14,4 +16,4 @@ WORKDIR /go/src/near_me_server
 # Commentize it before deploy(only used for dev)
 # EXPOSE 9000
 
-CMD revel run near_me_server prod $PORT
+CMD sh start_server.sh
